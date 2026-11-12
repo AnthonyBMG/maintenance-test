@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BMG Maintenance TEST</title>
+<meta name="theme-color" content="#1B2023">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BMG TEST">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  html,body{margin:0;height:100%;background:#1B2023}
+  iframe{position:fixed;top:0;left:0;width:100%;height:100%;border:0;background:#F2F2F0}
+</style>
+</head>
+<body>
+<!-- Page d'accès BMG Maintenance : affiche l'appli Apps Script sans les comptes Google du navigateur -->
+<iframe id="app" title="BMG Maintenance" credentialless allow="clipboard-write"></iframe>
+<script>
+  var APP = "COLLER_ICI_LE_LIEN_DE_LA_COPIE_TEST";
+  var CLES = { bmgm_token: "s", bmgm_email: "e", bmgm_name: "n", bmgm_big: "b" };
+  function lire(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  var p = [];
+  Object.keys(CLES).forEach(function (k) { var v = lire(k); if (v) p.push(CLES[k] + "=" + encodeURIComponent(v)); });
+  document.getElementById("app").src = APP + (p.length ? "#" + p.join("&") : "");
+  // L'appli transmet sa session et ses préférences pour qu'elles survivent à la fermeture
+  window.addEventListener("message", function (e) {
+    var h = ""; try { h = new URL(e.origin).hostname; } catch (x) { return; }
+    if (!/(^|\.)googleusercontent\.com$/.test(h)) return;
+    var d = e.data || {}; if (d.bmgm !== "store" || !CLES[d.key]) return;
+    try { if (d.value) localStorage.setItem(d.key, d.value); else localStorage.removeItem(d.key); } catch (x) {}
+  });
+</script>
+</body>
+</html>
